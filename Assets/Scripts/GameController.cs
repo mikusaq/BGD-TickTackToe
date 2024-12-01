@@ -4,12 +4,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[System.Serializable]
+public class Player
+{
+    public Image panel;
+    public TMP_Text text;
+}
+
+[System.Serializable]
+public class PlayerColor
+{
+    public Color panelColor;
+    public Color textColor;
+}
+
 public class GameController : MonoBehaviour
 {
     public List<TMP_Text> buttonList;
     public GameObject gameOverPanel;
     public TMP_Text gameOverText;
     public GameObject restartButton;
+
+    public Player playerX;
+    public Player playerO;
+    public PlayerColor activePlayerColor;
+    public PlayerColor inactivePlayerColor;
 
     private string playerSide;
     private int moveCount;
@@ -21,6 +40,7 @@ public class GameController : MonoBehaviour
         gameOverPanel.SetActive(false);
         moveCount = 0;
         restartButton.SetActive(false);
+        SetPlayerColors(playerX, playerO);
     }
 
     void SetGameControllerReferenceOnButtons()
@@ -50,10 +70,13 @@ public class GameController : MonoBehaviour
         {
             GameOver(playerSide);
         }
-        ChangeSides();
-        if (moveCount >= 9)
+        else if (moveCount >= 9)
         {
             GameOver("draw");
+        }
+        else
+        {
+            ChangeSides();
         }
     }
 
@@ -62,10 +85,12 @@ public class GameController : MonoBehaviour
         if (playerSide == "X")
         {
             playerSide = "O";
+            SetPlayerColors(playerO, playerX);
         }
         else
         {
             playerSide = "X";
+            SetPlayerColors(playerX, playerO);
         }
     }
 
@@ -95,6 +120,7 @@ public class GameController : MonoBehaviour
         moveCount = 0;
         gameOverPanel.SetActive(false);
         restartButton.SetActive(false);
+        SetPlayerColors(playerX, playerO);
         SetBoardInteractable(true);
 
         for (int i = 0; i < buttonList.Count; i++)
@@ -111,5 +137,12 @@ public class GameController : MonoBehaviour
         }
     }
 
+    void SetPlayerColors(Player newPlayer, Player oldPlayer)
+    {
+        newPlayer.panel.color = activePlayerColor.panelColor;
+        newPlayer.text.color = activePlayerColor.textColor;
+        oldPlayer.panel.color = inactivePlayerColor.panelColor;
+        oldPlayer.text.color = inactivePlayerColor.textColor;
+    }
 }
 
